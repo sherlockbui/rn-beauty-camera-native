@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   # CocoaPods replaces this source with the local package path during Expo
   # autolinking. A valid remote descriptor keeps the podspec publishable.
   s.source         = {
-    :git => 'https://github.com/sherlockbui/beauty-camera-native.git',
+    :git => 'https://github.com/sherlockbui/rn-beauty-camera-native.git',
     :tag => "v#{s.version}"
   }
   s.static_framework = true

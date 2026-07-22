@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.2
+
+- Rename the package to `@sherlockbui/rn-beauty-camera-native` and the GitHub
+  repository to `sherlockbui/rn-beauty-camera-native`.
+- Raise the preferred Android preview resolution from 720p to 1080p.
+- Replace the strong Gaussian-heavy Android smoothing pass with a clearer,
+  edge-aware bilateral filter.
+- Keep background pixels unchanged, apply a subtle skin-only fallback while face
+  detection warms up, and tune the Natural filter for a visible but balanced result.
+
 ## 0.2.1
 
 - Remove the face guide and recognition status badge from the ready-to-use

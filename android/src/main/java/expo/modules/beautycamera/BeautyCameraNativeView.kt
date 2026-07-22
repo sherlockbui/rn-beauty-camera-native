@@ -208,7 +208,7 @@ class BeautyCameraNativeView(context: Context, appContext: AppContext) : ExpoVie
         val rotation = display?.rotation ?: Surface.ROTATION_0
         val preview = Preview.Builder()
           .setTargetRotation(rotation)
-          .setResolutionSelector(resolutionSelector(Size(1280, 720)))
+          .setResolutionSelector(resolutionSelector(Size(1920, 1080)))
           .build()
         preview.setSurfaceProvider { request ->
           renderer.frontFacing = facing == "front"

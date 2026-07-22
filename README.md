@@ -1,4 +1,4 @@
-# @sherlockbui/beauty-camera-native
+# @sherlockbui/rn-beauty-camera-native
 
 Ready-to-use GPU beauty camera for Expo and React Native. The package includes
 the full-screen React component, native Android/iOS renderer, Expo config plugin
@@ -16,8 +16,8 @@ and capture file helpers.
 ## Install
 
 ```sh
-yarn add @sherlockbui/beauty-camera-native
-# or: npm install @sherlockbui/beauty-camera-native
+yarn add @sherlockbui/rn-beauty-camera-native
+# or: npm install @sherlockbui/rn-beauty-camera-native
 ```
 
 Add the config plugin:
@@ -27,7 +27,7 @@ Add the config plugin:
   "expo": {
     "plugins": [
       [
-        "@sherlockbui/beauty-camera-native",
+        "@sherlockbui/rn-beauty-camera-native",
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to use the camera."
         }
@@ -50,7 +50,7 @@ the `BeautyCamera` component.
 ## Ready-to-use component
 
 ```tsx
-import BeautyCamera from '@sherlockbui/beauty-camera-native';
+import BeautyCamera from '@sherlockbui/rn-beauty-camera-native';
 
 export function CameraScreen() {
   return (
@@ -93,7 +93,7 @@ type BeautyCameraResult = {
 Temporary captures are stored in the app cache. Delete a discarded capture with:
 
 ```ts
-import {deleteBeautyCameraFile} from '@sherlockbui/beauty-camera-native';
+import {deleteBeautyCameraFile} from '@sherlockbui/rn-beauty-camera-native';
 
 deleteBeautyCameraFile(photo.uri);
 ```
@@ -108,7 +108,7 @@ import {StyleSheet} from 'react-native';
 import {
   NativeBeautyCamera,
   type NativeBeautyCameraRef,
-} from '@sherlockbui/beauty-camera-native';
+} from '@sherlockbui/rn-beauty-camera-native';
 
 export function CustomCamera() {
   const cameraRef = useRef<NativeBeautyCameraRef>(null);

@@ -385,59 +385,57 @@ internal class BeautyGLRenderer(
         vec2 uv = warpUv(aspectFillUv(vViewUv));
         vec4 original = cameraAt(uv);
         if (uBeautyEnabled < 0.5) { outColor = original; return; }
-        vec3 toned = naturalTone(original.rgb);
-        // Super-smooth gradient feathering (0.55 face, 0.40 features) to eliminate all mask boundaries
-        float faceMask = (uFace.z <= 0.0 || uFace.w <= 0.0) ? 1.0 : ellipse(uv, uFace, 0.55);
-        float protectedFeat = (uFace.z <= 0.0 || uFace.w <= 0.0) ? 0.0 : max(
-          max(ellipse(uv, uLeftEye, 0.40), ellipse(uv, uRightEye, 0.40)),
-          max(
-            max(ellipse(uv, uLeftBrow, 0.40), ellipse(uv, uRightBrow, 0.40)),
-            max(ellipse(uv, uNose, 0.35), ellipse(uv, uMouth, 0.40))
-          )
-        );
-        float skinProb = skinConfidence(original.rgb);
-        float blendMask = faceMask * (1.0 - protectedFeat * 0.50) * smoothstep(0.10, 0.38, skinProb);
 
-        // Early Exit Optimization: Skip heavy GPU sampling for non-face background pixels (80% frame speedup)
+        // Keep a subtle skin-only fallback while face detection is warming up so
+        // the Natural toggle always has an immediate, but never full-frame, effect.
+        bool hasFace = uFace.z > 0.0 && uFace.w > 0.0;
+        float faceMask = hasFace ? max(ellipse(uv, uFace, 0.50), 0.12) : 0.35;
+        float protectedFeat = hasFace ? max(
+            max(ellipse(uv, uLeftEye, 0.40), ellipse(uv, uRightEye, 0.40)),
+            max(
+              max(ellipse(uv, uLeftBrow, 0.40), ellipse(uv, uRightBrow, 0.40)),
+              max(ellipse(uv, uNose, 0.35), ellipse(uv, uMouth, 0.40))
+            )
+          ) : 0.0;
+        float skinProb = skinConfidence(original.rgb);
+        float blendMask = faceMask * (1.0 - protectedFeat * 0.68) * smoothstep(0.08, 0.32, skinProb);
+
+        // Preserve the camera image exactly outside detected facial skin.
         if (blendMask < 0.015) {
-          outColor = vec4(toned, original.a);
+          outColor = original;
           return;
         }
 
-        // Fast 6-Point TikTok Airbrush Filter (Bilateral + Gaussian Dual-Pass at 60 FPS)
-        vec2 r1 = max(uTexelSize * 6.5, vec2(0.0036));
-        vec2 r2 = max(uTexelSize * 13.5, vec2(0.0074));
-        vec3 sum = toned * 1.0;
-        vec3 softSum = toned * 1.0;
-        float weight = 1.0;
-        float softWeight = 1.0;
+        // Compact edge-aware kernel. The old dual-pass Gaussian used a radius of
+        // up to 13.5 pixels and erased facial detail at the documented 0.3 level.
+        vec2 r1 = max(uTexelSize * 3.0, vec2(0.0014));
+        vec2 r2 = max(uTexelSize * 6.0, vec2(0.0028));
+        vec3 center = original.rgb;
+        vec3 sum = center * 1.25;
+        float weight = 1.25;
         vec2 offsets[6] = vec2[6](
           vec2(r1.x, 0.0), vec2(-r1.x, 0.0), vec2(0.0, r1.y), vec2(0.0, -r1.y),
           vec2(r2.x, r2.y), vec2(-r2.x, -r2.y)
         );
         for (int i = 0; i < 6; i++) {
-          vec3 sampleColor = naturalTone(cameraAt(uv + offsets[i]).rgb);
-          float edge = exp(-dot(sampleColor - toned, sampleColor - toned) * 3.2);
-          float spatial = i < 4 ? 1.0 : 0.75;
+          vec3 sampleColor = cameraAt(uv + offsets[i]).rgb;
+          vec3 delta = sampleColor - center;
+          float edge = exp(-dot(delta, delta) * 12.0);
+          float spatial = i < 4 ? 1.0 : 0.65;
           sum += sampleColor * edge * spatial;
           weight += edge * spatial;
-          softSum += sampleColor * spatial;
-          softWeight += spatial;
         }
         vec3 bilateralSmoothed = sum / max(weight, 0.001);
-        vec3 gaussianBlur = softSum / max(softWeight, 0.001);
 
-        // TikTok Airbrush Dual-Blend: Mix edge-aware smoothing with soft airbrush blur
-        vec3 tiktokSmoothed = mix(bilateralSmoothed, gaussianBlur, 0.58);
+        // Make level 0.3 visible while retaining edge detail through bilateral weights.
+        float smoothingFactor = clamp(uSmoothing * 2.4, 0.0, 0.72) * blendMask;
+        vec3 beauty = mix(center, bilateralSmoothed, smoothingFactor);
 
-        // Blend smoothing seamlessly onto skin (TikTok Ultra Airbrush Smooth)
-        float smoothingFactor = clamp(uSmoothing * 3.2, 0.0, 0.999) * blendMask;
-        vec3 beauty = mix(toned, tiktokSmoothed, smoothingFactor);
-
-        // Natural Soft-Light Skin Whitening (smooth tone curve, no mask outlines)
-        vec3 brightTone = beauty * (vec3(1.0) + (vec3(1.0) - beauty) * 0.28 * uSmoothing);
-        brightTone += vec3(0.038, 0.035, 0.035) * uSmoothing;
-        beauty = mix(beauty, brightTone, blendMask);
+        // Visible but restrained tone lift, restricted to detected skin colors.
+        float toneFactor = clamp(uSmoothing * 1.2, 0.0, 0.36) * blendMask;
+        vec3 softTone = naturalTone(beauty);
+        softTone += (vec3(1.0) - softTone) * 0.035;
+        beauty = mix(beauty, softTone, toneFactor);
 
         outColor = vec4(clamp(beauty, 0.0, 1.0), original.a);
       }

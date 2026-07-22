@@ -1,6 +1,6 @@
 {
-  "name": "@sherlockbui/beauty-camera-native",
-  "version": "0.2.1",
+  "name": "@sherlockbui/rn-beauty-camera-native",
+  "version": "0.2.2",
   "description": "Ready-to-use GPU beauty camera component for Expo and React Native",
   "main": "build/index.js",
   "react-native": "src/index.tsx",
@@ -43,14 +43,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sherlockbui/beauty-camera-native.git"
+    "url": "git+https://github.com/sherlockbui/rn-beauty-camera-native.git"
   },
   "bugs": {
-    "url": "https://github.com/sherlockbui/beauty-camera-native/issues"
+    "url": "https://github.com/sherlockbui/rn-beauty-camera-native/issues"
   },
-  "homepage": "https://github.com/sherlockbui/beauty-camera-native#readme",
+  "homepage": "https://github.com/sherlockbui/rn-beauty-camera-native#readme",
   "author": "sherlockbui",
   "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/react": "~19.2.10",
     "expo": "^55.0.0",
