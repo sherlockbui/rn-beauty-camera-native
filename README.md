@@ -1,4 +1,4 @@
-# @jobtik/beauty-camera-native
+# @sherlockbui/beauty-camera-native
 
 GPU-accelerated native beauty camera for Expo and React Native. The preview stays
 on the native GPU path and JavaScript only receives events and capture results.
@@ -17,14 +17,14 @@ on the native GPU path and JavaScript only receives events and capture results.
 With Expo:
 
 ```sh
-npx expo install @jobtik/beauty-camera-native
+npx expo install @sherlockbui/beauty-camera-native
 ```
 
 Or with Yarn/npm:
 
 ```sh
-yarn add @jobtik/beauty-camera-native
-# npm install @jobtik/beauty-camera-native
+yarn add @sherlockbui/beauty-camera-native
+# npm install @sherlockbui/beauty-camera-native
 ```
 
 Add the config plugin when the installer does not add it automatically:
@@ -34,7 +34,7 @@ Add the config plugin when the installer does not add it automatically:
   "expo": {
     "plugins": [
       [
-        "@jobtik/beauty-camera-native",
+        "@sherlockbui/beauty-camera-native",
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to use the camera."
         }
@@ -67,7 +67,7 @@ import {StyleSheet} from 'react-native';
 import {
   NativeBeautyCamera,
   type NativeBeautyCameraRef,
-} from '@jobtik/beauty-camera-native';
+} from '@sherlockbui/beauty-camera-native';
 
 export function CameraScreen() {
   const cameraRef = useRef<NativeBeautyCameraRef>(null);

@@ -68,9 +68,9 @@ public final class BeautyCameraNativeView: ExpoView, AVCaptureVideoDataOutputSam
   let onFaceState = EventDispatcher()
 
   private let session = AVCaptureSession()
-  private let sessionQueue = DispatchQueue(label: "jobtik.beauty-camera.session")
+  private let sessionQueue = DispatchQueue(label: "sherlockbui.beauty-camera.session")
   private let videoQueue = DispatchQueue(
-    label: "jobtik.beauty-camera.video",
+    label: "sherlockbui.beauty-camera.video",
     qos: .userInteractive
   )
   private let stateLock = NSLock()

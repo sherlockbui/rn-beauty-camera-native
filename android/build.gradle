@@ -3,7 +3,7 @@ plugins {
   id 'expo-module-gradle-plugin'
 }
 
-group = 'com.jobtik.beautycamera'
+group = 'com.sherlockbui.beautycamera'
 version = '0.1.0'
 
 android {

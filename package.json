@@ -1,5 +1,5 @@
 {
-  "name": "@jobtik/beauty-camera-native",
+  "name": "@sherlockbui/beauty-camera-native",
   "version": "0.1.0",
   "description": "GPU-accelerated native beauty camera for Expo and React Native",
   "main": "build/index.js",
