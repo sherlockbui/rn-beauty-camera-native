@@ -1,0 +1,27 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'com.jobtik.beautycamera'
+version = '0.1.0'
+
+android {
+  namespace 'expo.modules.beautycamera'
+
+  defaultConfig {
+    minSdkVersion 26
+    versionCode 1
+    versionName '0.1.0'
+  }
+}
+
+dependencies {
+  def cameraxVersion = '1.5.1'
+  implementation "androidx.camera:camera-core:${cameraxVersion}"
+  implementation "androidx.camera:camera-camera2:${cameraxVersion}"
+  implementation "androidx.camera:camera-lifecycle:${cameraxVersion}"
+  implementation "androidx.camera:camera-view:${cameraxVersion}"
+  implementation 'com.google.mlkit:face-detection:16.1.7'
+  implementation 'com.google.mediapipe:tasks-vision:0.10.14'
+}

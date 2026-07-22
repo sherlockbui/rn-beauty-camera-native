@@ -1,0 +1,10 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["BeautyCameraNativeModule"],
+    "podspecPath": "ios/BeautyCameraNative.podspec"
+  },
+  "android": {
+    "modules": ["expo.modules.beautycamera.BeautyCameraNativeModule"]
+  }
+}
