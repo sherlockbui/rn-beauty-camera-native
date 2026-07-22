@@ -50,9 +50,6 @@ import {
 
 const CONTROL_BACKGROUND = 'rgba(0, 0, 0, 0.58)';
 const PANEL_BACKGROUND = 'rgba(0, 0, 0, 0.42)';
-const SUCCESS_BACKGROUND = 'rgba(16, 185, 129, 0.88)';
-const WARNING_BACKGROUND = 'rgba(245, 158, 11, 0.9)';
-const GUIDE_SHADOW = 'rgba(0, 0, 0, 0.7)';
 const DEFAULT_SMOOTHING_STRENGTH = 0.75;
 const DEFAULT_MAX_OUTPUT_WIDTH = 1024;
 const DEFAULT_JPEG_QUALITY = 0.8;
@@ -94,7 +91,6 @@ const BeautyCamera = ({
   const [appState, setAppState] = useState(AppState.currentState);
   const [facing, setFacing] = useState<BeautyCameraFacing>(initialFacing);
   const [naturalRequested, setNaturalRequested] = useState(beautyEnabled);
-  const [hasFace, setHasFace] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraSessionKey, setCameraSessionKey] = useState(0);
   const [torchEnabled, setTorchEnabled] = useState(false);
@@ -155,7 +151,6 @@ const BeautyCamera = ({
 
   useEffect(() => {
     setCameraReady(false);
-    setHasFace(false);
     if (facing !== 'back') setTorchEnabled(false);
   }, [facing]);
 
@@ -173,7 +168,6 @@ const BeautyCamera = ({
   const handleNativeError = useCallback(
     (error: NativeBeautyCameraError) => {
       if (error.code === 'face-detector') {
-        setHasFace(false);
         return;
       }
 
@@ -233,7 +227,6 @@ const BeautyCamera = ({
     currentPreviewUri.current = null;
     setPreview(null);
     setErrorMessage(null);
-    setHasFace(false);
     setCameraSessionKey(current => current + 1);
   }, [preview?.uri]);
 
@@ -269,7 +262,6 @@ const BeautyCamera = ({
 
   const handleFlip = useCallback(() => {
     setTorchEnabled(false);
-    setHasFace(false);
     setFacing(current => (current === 'front' ? 'back' : 'front'));
     setCameraSessionKey(current => current + 1);
   }, []);
@@ -330,13 +322,6 @@ const BeautyCamera = ({
     );
   }
 
-  const status = (() => {
-    if (facing === 'back') return 'Camera sau · không làm mịn';
-    if (!naturalRequested) return 'Đã tắt Natural';
-    if (hasFace) return 'Đã nhận diện khuôn mặt';
-    return 'Giữ khuôn mặt rõ và đủ sáng';
-  })();
-
   return (
     <View style={styles.container}>
       {!preview && (
@@ -356,7 +341,6 @@ const BeautyCamera = ({
             setErrorMessage(null);
             setCameraReady(true);
           }}
-          onFaceState={({detected}) => setHasFace(detected)}
           onError={handleNativeError}
         />
       )}
@@ -397,25 +381,7 @@ const BeautyCamera = ({
             )}
           </View>
 
-          <View style={styles.guideContainer} pointerEvents="none">
-            <View
-              style={[
-                styles.faceGuide,
-                hasFace && effectiveBeauty && styles.faceGuideSuccess,
-              ]}
-            />
-          </View>
-
           <View style={styles.statusArea} pointerEvents="box-none">
-            <View
-              style={[
-                styles.statusBadge,
-                hasFace && effectiveBeauty
-                  ? styles.statusBadgeSuccess
-                  : styles.statusBadgeWarning,
-              ]}>
-              <Text style={styles.statusText}>{status}</Text>
-            </View>
             {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
             {errorMessage && (
               <Pressable style={styles.retryButton} onPress={handleRetry}>
@@ -583,41 +549,12 @@ const styles = StyleSheet.create({
     height: SIZES.buttonHeightMd,
     width: SIZES.buttonHeightMd,
   },
-  guideContainer: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  faceGuide: {
-    borderColor: COLORS.white,
-    borderRadius: SIZES.radiusRound,
-    borderWidth: SIZES.borderWidthThick,
-    height: verticalScale(330),
-    shadowColor: GUIDE_SHADOW,
-    shadowOffset: SIZES.shadowOffsetSm,
-    shadowOpacity: 1,
-    shadowRadius: SIZES.shadowRadiusMd,
-    width: scale(250),
-  },
-  faceGuideSuccess: {borderColor: COLORS.success},
   statusArea: {
     alignItems: 'center',
     bottom: verticalScale(155),
     left: SPACING.lg,
     position: 'absolute',
     right: SPACING.lg,
-  },
-  statusBadge: {
-    borderRadius: SIZES.radiusRound,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-  },
-  statusBadgeSuccess: {backgroundColor: SUCCESS_BACKGROUND},
-  statusBadgeWarning: {backgroundColor: WARNING_BACKGROUND},
-  statusText: {
-    color: COLORS.white,
-    fontSize: TYPOGRAPHY.labelSmall,
-    fontWeight: '700',
   },
   errorText: {
     color: COLORS.white,

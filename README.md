@@ -73,8 +73,8 @@ export function CameraScreen() {
 }
 ```
 
-`BeautyCamera` includes permission, camera preview, face status, Natural filter,
-torch, camera flip, capture, preview, retake and confirmation UI. Pass
+`BeautyCamera` includes permission, camera preview, Natural filter, torch, camera
+flip, capture, preview, retake and confirmation UI. Pass
 `active={false}` when its screen is not focused.
 
 The confirmed capture result is:

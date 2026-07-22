@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1
+
+- Remove the face guide and recognition status badge from the ready-to-use
+  `BeautyCamera` UI.
+- Keep the native face-analysis, beauty-rendering and capture pipelines
+  unchanged.
+
 ## 0.2.0
 
 - Export a ready-to-use `BeautyCamera` component with capture, preview, retake,
