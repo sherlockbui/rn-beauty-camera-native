@@ -1,33 +1,26 @@
 # @sherlockbui/beauty-camera-native
 
-GPU-accelerated native beauty camera for Expo and React Native. The preview stays
-on the native GPU path and JavaScript only receives events and capture results.
+Ready-to-use GPU beauty camera for Expo and React Native. The package includes
+the full-screen React component, native Android/iOS renderer, Expo config plugin
+and capture file helpers.
 
 ## Requirements
 
-- Expo SDK 55 or newer
-- React Native 0.83 or newer
-- React 19 or newer
-- Android min SDK 26
+- Expo SDK 55
+- React Native 0.83
+- React 19
+- Android API 26 or newer
 - iOS 15.5 or newer
 - A development/release build; Expo Go cannot load this native module
 
 ## Install
 
-With Expo:
-
-```sh
-npx expo install @sherlockbui/beauty-camera-native
-```
-
-Or with Yarn/npm:
-
 ```sh
 yarn add @sherlockbui/beauty-camera-native
-# npm install @sherlockbui/beauty-camera-native
+# or: npm install @sherlockbui/beauty-camera-native
 ```
 
-Add the config plugin when the installer does not add it automatically:
+Add the config plugin:
 
 ```json
 {
@@ -44,22 +37,70 @@ Add the config plugin when the installer does not add it automatically:
 }
 ```
 
-Then regenerate/install the native projects and create a new binary:
+Then regenerate the native project or make a new development build:
 
 ```sh
 npx expo prebuild
-npx pod-install
 ```
 
-The config plugin adds `android.permission.CAMERA` and
-`NSCameraUsageDescription`. Your app must still request camera permission at
-runtime before mounting the camera view.
+The plugin adds the Android/iOS camera permission metadata and enforces Android
+min SDK 26 and iOS deployment target 15.5. Runtime permission is requested by
+the `BeautyCamera` component.
 
-For a bare React Native app, first install and configure Expo Modules, set Android
-`minSdkVersion` to at least 26 and the iOS deployment target to at least 15.5,
-then run CocoaPods as usual.
+## Ready-to-use component
 
-## Usage
+```tsx
+import BeautyCamera from '@sherlockbui/beauty-camera-native';
+
+export function CameraScreen() {
+  return (
+    <BeautyCamera
+      active
+      initialFacing="front"
+      allowCameraFlip
+      beautyEnabled
+      smoothingStrength={0.3}
+      slimFaceStrength={0}
+      enlargeEyesStrength={0}
+      noseSlimStrength={0}
+      maxOutputWidth={1024}
+      jpegQuality={0.8}
+      onCapture={photo => console.log(photo.uri)}
+      onCancel={() => {}}
+      onError={error => console.warn(error.code, error.message)}
+    />
+  );
+}
+```
+
+`BeautyCamera` includes permission, camera preview, face status, Natural filter,
+torch, camera flip, capture, preview, retake and confirmation UI. Pass
+`active={false}` when its screen is not focused.
+
+The confirmed capture result is:
+
+```ts
+type BeautyCameraResult = {
+  uri: string;
+  width: number;
+  height: number;
+  facing: 'front' | 'back';
+  filterApplied: boolean;
+  smoothingApplied: boolean;
+};
+```
+
+Temporary captures are stored in the app cache. Delete a discarded capture with:
+
+```ts
+import {deleteBeautyCameraFile} from '@sherlockbui/beauty-camera-native';
+
+deleteBeautyCameraFile(photo.uri);
+```
+
+## Low-level native view
+
+Use `NativeBeautyCamera` when the app provides its own camera UI:
 
 ```tsx
 import React, {useRef} from 'react';
@@ -69,16 +110,8 @@ import {
   type NativeBeautyCameraRef,
 } from '@sherlockbui/beauty-camera-native';
 
-export function CameraScreen() {
+export function CustomCamera() {
   const cameraRef = useRef<NativeBeautyCameraRef>(null);
-
-  const takePhoto = async () => {
-    const photo = await cameraRef.current?.capture({
-      maxWidth: 1024,
-      quality: 0.8,
-    });
-    console.log(photo?.uri);
-  };
 
   return (
     <NativeBeautyCamera
@@ -88,9 +121,6 @@ export function CameraScreen() {
       facing="front"
       beautyEnabled
       smoothingStrength={0.3}
-      slimFaceStrength={0}
-      enlargeEyesStrength={0}
-      noseSlimStrength={0}
       onReady={() => {}}
       onFaceState={({detected}) => console.log({detected})}
       onError={({code, message}) => console.warn(code, message)}
@@ -99,45 +129,20 @@ export function CameraScreen() {
 }
 ```
 
-`capture()` resolves to:
-
-```ts
-type NativeBeautyCameraCapture = {
-  uri: string;
-  width: number;
-  height: number;
-  filterApplied: boolean;
-  smoothingApplied: boolean;
-};
-```
-
-## Props
-
-| Prop | Type | Notes |
-| --- | --- | --- |
-| `active` | `boolean` | Starts/stops the camera session. |
-| `facing` | `'front' \| 'back'` | Selects the lens. |
-| `beautyEnabled` | `boolean` | Enables tone and smoothing on the front camera. |
-| `smoothingStrength` | `number` | Clamped to `0...0.3`. |
-| `slimFaceStrength` | `number?` | Face warp strength, clamped to `0...1`. |
-| `enlargeEyesStrength` | `number?` | Eye warp strength, clamped to `0...1`. |
-| `noseSlimStrength` | `number?` | Nose warp strength, clamped to `0...1`. |
-| `enableTorch` | `boolean?` | Torch is available on the back camera only. |
+The low-level ref exposes `capture({maxWidth, quality})`.
 
 ## Native implementation
 
 - iOS: `AVCaptureVideoDataOutput -> CVMetalTextureCache -> Metal -> MTKView`
 - Android: `CameraX -> SurfaceTexture/OES -> OpenGL ES 3 -> GLSurfaceView`
-- Face analysis is local; MediaPipe/ML Kit data is not sent to JavaScript
-- Preview frames are not copied to JavaScript; pixel readback happens only for capture
-
-Captured JPEG files are written to the app cache directory. Move or upload a
-file before the operating system clears that cache.
+- Face analysis stays on-device
+- Preview frames remain on the GPU path; pixel readback happens only on capture
 
 ## Release checks
 
 ```sh
 yarn build
+yarn typecheck
 npm pack --dry-run
 ```
 
