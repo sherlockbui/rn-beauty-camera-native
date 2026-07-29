@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.4
+
+- Upgrade MediaPipe Tasks Vision to `0.10.26.1` so its Android native
+  libraries support 16 KB page sizes on both 64-bit and ARMv7 devices.
+- Preserve the AutoValue annotation processor exclusion required by R8
+  release builds.
+
 ## 0.2.3
 
 - Exclude the AutoValue annotation processor from the MediaPipe Android runtime

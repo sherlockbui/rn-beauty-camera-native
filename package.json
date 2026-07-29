@@ -1,6 +1,6 @@
 {
   "name": "@sherlockbui/rn-beauty-camera-native",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Ready-to-use GPU beauty camera component for Expo and React Native",
   "main": "build/index.js",
   "react-native": "src/index.tsx",
