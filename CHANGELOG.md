@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3
+
+- Exclude the AutoValue annotation processor from the MediaPipe Android runtime
+  classpath so R8 release builds do not resolve compiler-only
+  `javax.lang.model` classes.
+
 ## 0.2.2
 
 - Rename the package to `@sherlockbui/rn-beauty-camera-native` and the GitHub
