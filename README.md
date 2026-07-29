@@ -9,7 +9,7 @@ and capture file helpers.
 - Expo SDK 55
 - React Native 0.83
 - React 19
-- Android API 26 or newer
+- Android API 24 or newer
 - iOS 15.5 or newer
 - A development/release build; Expo Go cannot load this native module
 
@@ -44,7 +44,7 @@ npx expo prebuild
 ```
 
 The plugin adds the Android/iOS camera permission metadata and enforces Android
-min SDK 26 and iOS deployment target 15.5. Runtime permission is requested by
+min SDK 24 and iOS deployment target 15.5. Runtime permission is requested by
 the `BeautyCamera` component.
 
 ## Ready-to-use component

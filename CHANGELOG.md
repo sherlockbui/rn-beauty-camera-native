@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.5
+
+- Lower the Android minimum SDK from API 26 to API 24, restoring support for
+  Android 7.0 and 7.1.
+- Keep CameraX 1.5.1 and MediaPipe Tasks Vision 0.10.26.1, whose transitive
+  Android requirements remain compatible with API 24.
+
 ## 0.2.4
 
 - Upgrade MediaPipe Tasks Vision to `0.10.26.1` so its Android native

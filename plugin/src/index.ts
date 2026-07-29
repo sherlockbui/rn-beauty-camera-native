@@ -15,7 +15,7 @@ type BeautyCameraPluginOptions = {
 
 const DEFAULT_CAMERA_PERMISSION =
   'Allow $(PRODUCT_NAME) to access your camera for photos.';
-const MIN_ANDROID_SDK = 26;
+const MIN_ANDROID_SDK = 24;
 const MIN_IOS_DEPLOYMENT_TARGET = '15.5';
 
 const compareVersions = (left: string, right: string) => {
